@@ -41,15 +41,22 @@ migrations = 'Migrations'
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
 
-def get_files(files, ext, filter_string):
+def get_files_by_ext(files, ext):
+    result = []
+    for file_name in files:
+        if file_name.endswith("." + ext):
+            result.append(file_name)
+    return result
+
+
+def get_files(files, filter_string):
     result = []
     path = os.path.join(current_dir, migrations)
     for file_name in files:
-        if file_name.endswith("." + ext):
-            with open(os.path.join(path, file_name)) as f:
-                text = f.read()
-                if filter_string.lower() in text.lower():
-                    result.append(file_name)
+        with open(os.path.join(path, file_name)) as f:
+            text = f.read()
+            if filter_string.lower() in text.lower():
+                result.append(file_name)
     return result
 
 
@@ -62,8 +69,8 @@ def print_result(files):
 if __name__ == '__main__':
     print(current_dir)
     path = os.path.join(current_dir, migrations)
-    file_list = os.listdir(path)
+    file_list = get_files_by_ext(os.listdir(path), "sql")
     while True:
         filter_string = input("Введите строку: ")
-        file_list = get_files(file_list, "sql", filter_string)
+        file_list = get_files(file_list, filter_string)
         print_result(file_list)
